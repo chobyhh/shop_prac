@@ -1,14 +1,21 @@
 import logo from './logo.svg';
 import './App.css';
 import { Navbar, Container, Nav, NavDropdown, Jumbotron, Button } from 'react-bootstrap';
-import { useState } from 'react';
+import React,{ useContext, useEffect, useState } from 'react';
 import Data from './data';
 import Detail from './Detail';
 import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom';
+import axios from 'axios';
+import Cart from './Cart'
+
+let stockContext = React.createContext();
 
 function App() {
 
+  
+
   let [shoes, shoes_c] = useState(Data);
+  let [stock, stock_c] = useState([10,11,12]);
 
   return (
     <div className="App">
@@ -21,8 +28,8 @@ function App() {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link > <Link to="/">Home</Link></Nav.Link>
-              <Nav.Link ><Link to="/detail">Detail</Link></Nav.Link>
+              <Nav.Link as={Link} to="/">Home</Nav.Link>
+              <Nav.Link as={Link} to="/detail">Detail</Nav.Link>
               <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
@@ -56,20 +63,42 @@ function App() {
             </Jumbotron>
 
             <div className='container'>
-              <div className='row'>
-              {
-              shoes.map((e, i)=>{
-                return(
-                  <Card shoes={shoes[i]} i={i} key={i}/>
-                  )
+              <stockContext.Provider value={stock}>
+                <div className='row'>
+                {
+                shoes.map((e, i)=>{
+                  return(
+                    <Card shoes={shoes[i]} i={i} key={i}/>
+                    )
+                  })
+                }
+                </div>
+              </stockContext.Provider>
+              
+
+            
+
+              <button className='btn btn-primary' onClick={()=>{
+
+                
+
+                axios.get('https://codingapple1.github.io/shop/data2.json')
+                .then((result)=>{console.log(result.data);
+                shoes_c([...shoes, ...result.data]);
+                
                 })
-              }
-              </div>
+                              
+
+              }}> 더보기 </button>
             </div>
           </Route>       
           <Route path="/detail/:id" > 
-            <Detail shoes={shoes} />
+            <Detail shoes={shoes} stock={stock} stock_c={stock_c}/>
           </Route> 
+
+          <Route path='/cart'>
+            <Cart />
+          </Route>
         </Switch>
 
       
@@ -81,13 +110,26 @@ function App() {
 
 
 function Card(props){
+  
+  let stock = useContext(stockContext);
+
   return(
 
           <div className='col-md-4'>
               <img src={'https://codingapple1.github.io/shop/shoes'+ (props.i+1)+'.jpg'} width="100%"/>
               <h4>{props.shoes.title}</h4>
               <p>{props.shoes.content} & {props.shoes.price}</p>
+              <p><Test/></p>
           </div>
+          
+  )
+}
+
+
+function Test(){
+  let stock = useContext(stockContext);
+  return(
+    <p> 재고 : {stock} </p>
   )
 }
 
