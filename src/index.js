@@ -33,10 +33,14 @@ let proto = [
 ]
 
 
+
 function reducer(state = proto, action){
   
-  if (action.type === '증가'){
-    
+  if( action.type === 'addCart'){
+    let copy = [...state];
+    copy.push(action.payload);
+    return copy
+  }else if (action.type === '증가'){
     let copy = [...state];
     copy[0].quan++
     return copy

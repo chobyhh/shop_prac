@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import './Detail.scss';
 import { Navbar, Container, Nav, NavDropdown, Jumbotron, Button } from 'react-bootstrap';
 import {CSSTransition} from "react-transition-group"
+import { connect } from "react-redux";
 
 let box = styled.div`
     padding : 20px;
@@ -56,7 +57,10 @@ function Detail(props){
 
               <Info stock={props.stock}/>
 
-              <button className="btn btn-danger" >주문하기</button> 
+              <button className="btn btn-danger" onClick={()=>{props.dispatch({type : 'addCart'
+              ,payload : {id:2, name:'새로운 상품2', quan : 1}});
+               history.push('/cart');
+              }}>주문하기</button> 
               <button className="btn btn-danger" onClick={()=>{history.goBack();}}>뒤로가기</button> 
             </div>
           </div>
@@ -110,4 +114,14 @@ function Detail(props){
 
 
 
-  export default Detail;
+  function 프롭스화 (state){
+      console.log(state);
+      return {
+          state : state.reducer,
+          alertClose : state.reducer2
+      }
+  }
+
+  export default connect(프롭스화)(Detail)
+
+  //export default Detail;
